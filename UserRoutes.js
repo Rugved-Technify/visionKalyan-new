@@ -126,15 +126,13 @@ router.post('/create-user', async (req, res) => {
   }
 });
 
-      
     // Function to validate if the sponsor ID exists
     async function validateSponsorId(db, sponsorId) {
         // Check if the sponsorId exists in the users collection
         const existingUser = await db.collection('users').findOne({ username: sponsorId });
         return existingUser ? true : false;
       }
-    
-    
+
       // Function to update downline levels recursively
       async function updateDownlineLevels(db, sponsorId, username, level, userId) {
         const now = new Date();
@@ -176,16 +174,13 @@ router.post('/create-user', async (req, res) => {
             throw error;
         }
     }
-    
 
 
     router.get('/get-all-users', async (req, res) => {
       try {
           const db = await connectToMongoDB();
-  
           const page = req.query.page || 1;
-          const pageSize = 250; // Adjust the page size as needed
-  
+          const pageSize = 250;
           const users = await db.collection('users').find({}, {
               projection: {
                   username: 1,
@@ -209,7 +204,6 @@ router.post('/create-user', async (req, res) => {
     router.get('/countUsers', async (req, res) => {
         try {
             const db = await connectToMongoDB();
-    
             const user = await  db.collection('users').countDocuments()
             res.json({ success: true, user });
         } catch (error) {
@@ -222,7 +216,6 @@ router.post('/create-user', async (req, res) => {
       const username = req.params.username;
       try {
           const db = await connectToMongoDB();
-  
           const user = await  db.collection('users').findOne({username: username});
           res.json({ success: true, user });
       } catch (error) {
@@ -237,12 +230,12 @@ router.post('/create-user', async (req, res) => {
 router.put('/update/:userId', async (req, res) => {
   try {
     const userId = req.params.userId;
-    const updateFields = req.body; 
+    const updateFields = req.body;
     const db = await connectToMongoDB();
 
     // Update the user by ID
     const result = await db.collection('users').updateOne(
-      { _id: new ObjectId(userId) }, 
+      { _id: new ObjectId(userId) },
       { $set: updateFields }
     );
     if (result.modifiedCount > 0) {
@@ -274,7 +267,7 @@ router.get('/achivers/:userId/:fromdate/:todate', async (req, res) => {
           $lt: toDateObject.toISOString()
         }
       })
-        .project({ username: 1, createdAt: 1 }) 
+        .project({ username: 1, createdAt: 1 })
         .toArray();
       res.status(200).json({ success: true, data: downlineCreatedAtData });
     } else {
